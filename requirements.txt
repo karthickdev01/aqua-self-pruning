@@ -1,0 +1,13 @@
+# AQUA Self-Pruning Network -- minimal dependencies.
+#
+# The autodiff engine, the optimiser, the pruning mechanism, the training
+# loop and the sparse inference path are all implemented from scratch in
+# this repository.  No deep-learning, autodiff or pruning library is used.
+#
+# No dataset-loading library is listed either: the dataset is generated in
+# pure NumPy, so the challenge's "scikit-learn for dataset loading only"
+# allowance is not needed.
+
+numpy>=1.24
+matplotlib>=3.6
+pytest>=7.0
