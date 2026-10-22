@@ -25,7 +25,9 @@ PLOTS_DIRECTORY = REPOSITORY_ROOT / "results" / "plots"
 REQUIRED_FILES = [
     "README.md",
     "DESIGN.md",
+    "LICENSE",
     "requirements.txt",
+    ".github/workflows/ci.yml",
     "aqua/engine/tensor.py",
     "aqua/engine/ops.py",
     "aqua/nn/layers.py",
