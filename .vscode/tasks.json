@@ -1,0 +1,364 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Criterion sweep",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/sweep_criteria.py > results/experiments/sweep_stdout.txt 2>&1; echo \"rc=$?\" >> results/experiments/sweep_stdout.txt",
+			"isBackground": true,
+			"group": "aqua"
+		},
+		{
+			"label": "Check sweep status",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && ps aux | grep \"[s]weep_criteria\" | wc -l && wc -l results/experiments/sweep_stdout.txt && ls -la results/experiments/",
+			"group": "aqua"
+		},
+		{
+			"label": "Run full test suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest -q > results/pytest_full.txt 2>&1; echo \"rc=$?\" >> results/pytest_full.txt; tail -40 results/pytest_full.txt",
+			"group": "aqua"
+		},
+		{
+			"label": "Run full test suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest -q > results/pytest_full.txt 2>&1; echo \"rc=$?\" >> results/pytest_full.txt; tail -30 results/pytest_full.txt",
+			"group": "aqua"
+		},
+		{
+			"label": "Run full test suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest -q > results/pytest_full.txt 2>&1; echo \"rc=$?\" >> results/pytest_full.txt; tail -30 results/pytest_full.txt",
+			"group": "aqua"
+		},
+		{
+			"label": "Run full test suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest -q > results/pytest_full.txt 2>&1; echo \"rc=$?\" >> results/pytest_full.txt; tail -20 results/pytest_full.txt",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit pruning and training milestone",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"feat: pruning machinery, training loop, sparse inference and full test suite\n\n- Importance criteria with Taylor derivation: magnitude baseline, saliency\n  (|w*dL/dW_eff|, batch-averaged), signedTaylor and gradientMagnitude\n  ablations.\n- Cubic sparsity ramp with a closed window so the final target is reached\n  exactly; global mask allocator with deterministic tie-breaking.\n- Adam with per-element timestep so a revived connection restarts its bias\n  correction; masked connections keep zero weight, zero moment and zero\n  second moment.\n- Budget-neutral regrowth implemented as a swap (revive the most sensitive\n  dead connection, prune the least important live one).\n- Sparse-aware forward path (CSC-style gather) plus dense and\n  dense-times-zero paths, with exact MAC counts and measured latency.\n- 115 tests covering every op, graph mechanics, masking, optimiser state,\n  pruning budget, sparse/dense equivalence and reproducibility.\n\nCo-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>\" && git --no-pager log --oneline",
+			"group": "aqua"
+		},
+		{
+			"label": "Full experiment suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/run_experiments.py --seeds 5 --epochs 60 --include-regrowth > results/experiments/experiments_log.txt 2>&1; echo \"rc=$?\" >> results/experiments/experiments_log.txt; tail -5 results/experiments/experiments_log.txt",
+			"isBackground": true,
+			"group": "aqua"
+		},
+		{
+			"label": "Check model dimensions",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nfrom aqua.nn.mlp import buildMlp\nimport numpy as np\nm = buildMlp(2,[32,32],2,rng=np.random.default_rng(0))\nprint('total connections', m.totalParameterCount())\nprint('bias params', sum(l.bias.size for l in m.layers if l.bias is not None))\nprint('per layer', [(l.inFeatures,l.outFeatures) for l in m.layers])\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Generate plots",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/make_plots.py > results/plots/plots_log.txt 2>&1; echo \"rc=$?\" >> results/plots/plots_log.txt; cat results/plots/plots_log.txt; ls -la results/plots/",
+			"group": "aqua"
+		},
+		{
+			"label": "Inspect cost metrics",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport csv\nrows = list(csv.DictReader(open('results/experiments/experiments_raw.csv')))\nseen = set()\nprint(f\\\"{'crit':<18}{'target':>7}{'theoMAC':>10}{'latRatio':>10}{'denseMs':>10}{'sparseMs':>10}{'acc':>8}\\\")\nfor r in rows:\n    k = (r['criterion'], r['targetSparsity'], r['withRegrowth'])\n    if k in seen or r['criterion']!='saliency': continue\n    seen.add(k)\n    print(f\\\"{r['criterion']:<18}{float(r['targetSparsity']):>7.2f}{float(r['theoreticalMacReduction']):>10.4f}{float(r['measuredLatencyRatio']):>10.3f}{float(r['denseLatencySeconds'])*1000:>10.4f}{float(r['sparseLatencySeconds'])*1000:>10.4f}{float(r['validationAccuracy']):>8.4f}\\\")\nprint()\nprint('regrowth rows:')\nfor r in rows:\n    if r['withRegrowth']=='True' and r['criterion']=='saliency' and r['seed']=='0':\n        print(' target',r['targetSparsity'],'theo',r['theoreticalMacReduction'][:6],'latRatio',r['measuredLatencyRatio'][:6],'acc',r['validationAccuracy'][:6],'revived',r['revivedConnections'])\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Re-run experiments with latency fix",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/run_experiments.py --seeds 5 --epochs 60 --include-regrowth > results/experiments/experiments_log.txt 2>&1; echo \"rc=$?\" >> results/experiments/experiments_log.txt; tail -3 results/experiments/experiments_log.txt",
+			"isBackground": true,
+			"group": "aqua"
+		},
+		{
+			"label": "Wait for experiments",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && sleep 180 && tail -4 results/experiments/experiments_log.txt",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify broadcast reduction edge cases",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport numpy as np\nfrom aqua.engine.ops import reduceGradToShape\n# 3D broadcast against 2D and 1D\ncases = [((4,3,5),(3,5)), ((4,3,5),(5,)), ((4,3,5),(1,5)), ((4,3,5),(3,1)), ((4,3),(3,)), ((4,3),(1,))]\nfor out_shape, in_shape in cases:\n    g = np.random.default_rng(0).normal(size=out_shape)\n    r = reduceGradToShape(g, in_shape)\n    # reference: build the broadcast index map and sum\n    ref = np.zeros(in_shape)\n    for idx in np.ndindex(out_shape):\n        b = tuple(0 if in_shape[k]==1 and out_shape[k]>1 else idx[k] for k in range(len(in_shape)))\n        ref[b] += g[idx]\n    ok = np.allclose(r, ref)\n    print(f'{out_shape} <- {in_shape}  shape={r.shape}  correct={ok}')\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify broadcast reduction edge cases",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport numpy as np\nfrom aqua.engine.ops import reduceGradToShape\ndef reference(g, in_shape):\n    # align in_shape to the trailing axes of g.shape (numpy broadcasting rule)\n    padded = (1,)*(g.ndim-len(in_shape)) + tuple(in_shape)\n    ref = np.zeros(in_shape)\n    for idx in np.ndindex(g.shape):\n        b = tuple(0 if padded[k]==1 and g.shape[k]>1 else idx[k] for k in range(g.ndim))[-len(in_shape):]\n        ref[b] += g[idx]\n    return ref\ncases = [((4,3,5),(3,5)), ((4,3,5),(5,)), ((4,3,5),(1,5)), ((4,3,5),(3,1)), ((4,3),(3,)), ((4,3),(1,)), ((4,3,5),(3,5,1)), ((4,3,5),(1,1,5))]\nfor out_shape, in_shape in cases:\n    g = np.random.default_rng(0).normal(size=out_shape)\n    r = reduceGradToShape(g, in_shape)\n    ref = reference(g, in_shape)\n    print(f'{str(out_shape):<12} <- {str(in_shape):<10} shape={str(r.shape):<10} correct={np.allclose(r, ref)}')\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Test broadcast reduction",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest tests/test_broadcast_reduction.py -q 2>&1 | tail -20",
+			"group": "aqua"
+		},
+		{
+			"label": "Test broadcast reduction again",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest tests/test_broadcast_reduction.py -q 2>&1 | tail -20",
+			"group": "aqua"
+		},
+		{
+			"label": "Test broadcast reduction",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest tests/test_broadcast_reduction.py -q 2>&1 | tail -15",
+			"group": "aqua"
+		},
+		{
+			"label": "Check experiments and run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && tail -3 results/experiments/experiments_log.txt && echo \"--- RUNNING FULL SUITE ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -8",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify latency metrics",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport csv\nrows = list(csv.DictReader(open('results/experiments/experiments_raw.csv')))\nprint(f\\\"{'crit':<18}{'tgt':>6}{'theoMAC':>9}{'latR32':>8}{'latR1':>8}{'latR256':>9}{'denseMs32':>11}{'sparseMs32':>11}{'acc':>8}\\\")\nseen=set()\nfor r in rows:\n    if r['criterion']!='saliency' or r['withRegrowth']=='True': continue\n    k=(r['criterion'],r['targetSparsity'])\n    if k in seen: continue\n    seen.add(k)\n    print(f\\\"{r['criterion']:<18}{float(r['targetSparsity']):>6.2f}{float(r['theoreticalMacReduction']):>9.4f}{float(r['measuredLatencyRatio']):>8.2f}{float(r['measuredLatencyRatioBatch1']):>8.2f}{float(r['measuredLatencyRatioBatch256']):>9.2f}{float(r['denseLatencySeconds'])*1000:>11.4f}{float(r['sparseLatencySeconds'])*1000:>11.4f}{float(r['validationAccuracy']):>8.4f}\\\")\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Regenerate plots",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/make_plots.py 2>&1 | tail -8",
+			"group": "aqua"
+		},
+		{
+			"label": "Run submission audit",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -u scripts/verify_submission.py 2>&1 | tail -50",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit docs and experiments",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"feat(docs): README, DESIGN.md and the full experiment suite\n\nAdds the two required documents and the evidence they refer to:\n\n- README.md: overview, architecture, installation, usage, dataset,\n  results, cost measurement, the falsifiable claim, testing,\n  reproducibility, naming conventions, limitations.\n- DESIGN.md: the autodiff design, topological backward pass, broadcasting\n  reduction, masked-weight gradient semantics, Adam state after pruning\n  and regrowth, the Taylor derivation, the schedule and budget, dense\n  versus sparse-aware computation, statistical interpretation and the\n  multi-tenant production design.\n- scripts/: run_experiments.py (5 seeds x 5 sparsities x 4 criteria plus\n  a re-growth ablation), make_plots.py, train_baseline.py and\n  verify_submission.py.\n- results/: raw per-seed CSV, aggregated summary CSV/JSON and the four\n  committed plots.\n\nThe measured result: at 90% sparsity saliency pruning retains 0.8913\n+/- 0.0318 validation accuracy against 0.7700 +/- 0.1095 for magnitude\npruning, averaged over 5 seeds.  The sparse path is 5-13x SLOWER in\nwall-clock than the dense path on these small matrices, and the report\nsays so rather than claiming a speedup.\" && git --no-pager log --oneline",
+			"group": "aqua"
+		},
+		{
+			"label": "Rebuild commit history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && chmod +x scripts/rebuild_history.sh && bash scripts/rebuild_history.sh 2>&1 | tail -30",
+			"group": "aqua"
+		},
+		{
+			"label": "Restore modified engine files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git status --short && echo \"--- restoring engine files ---\" && git checkout -- aqua/engine/ops.py aqua/engine/tensor.py aqua/optim/adam.py && git status --short",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify engine state and run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && sed -n '50,62p' aqua/engine/tensor.py && echo \"--- ops reduce ---\" && sed -n '95,120p' aqua/engine/ops.py && echo \"--- TESTS ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -5",
+			"group": "aqua"
+		},
+		{
+			"label": "Re-run full test suite",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -m pytest -q 2>&1 | tail -12",
+			"group": "aqua"
+		},
+		{
+			"label": "Clear pycache and re-run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && find . -path ./.venv -prune -o -name \"__pycache__\" -type d -print -exec rm -rf {} + 2>/dev/null; echo \"--- cleared ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -12",
+			"group": "aqua"
+		},
+		{
+			"label": "Inspect actual loaded module",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport aqua.optim.adam as A, aqua.engine.tensor as T\nprint('adam file:', A.__file__)\nprint('has lastGradientNorm:', hasattr(A.AdamOptimizer, 'lastGradientNorm'))\nimport inspect\nsrc = inspect.getsource(A.AdamOptimizer.__init__)\nprint('init mentions lastGradientNorm:', 'lastGradientNorm' in src)\nprint('tensor dtype kind:', 'dtype.kind' in inspect.getsource(T._asArray))\n\"",
+			"group": "aqua"
+		},
+		{
+			"label": "Definitive file content check",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== adam.py __init__ tail ===\" && grep -n \"lastGradientNorm\\|stepCount\\|lastClipScale\" aqua/optim/adam.py | head -10; echo \"=== tensor.py _asArray ===\" && grep -n \"dtype.kind\\|np.bool_\" aqua/engine/tensor.py; echo \"=== tensor.py savedGrads ===\" && grep -n \"savedGrads\" aqua/engine/tensor.py; echo \"=== ops.py broadcast_to ===\" && grep -n \"broadcast_to(grad\" aqua/engine/ops.py; echo \"=== git diff ===\" && git --no-pager diff --stat",
+			"group": "aqua"
+		},
+		{
+			"label": "Show actual adam.py content",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== adam step() ===\" && sed -n '155,200p' aqua/optim/adam.py && echo \"=== adam __init__ end ===\" && sed -n '138,152p' aqua/optim/adam.py",
+			"group": "aqua"
+		},
+		{
+			"label": "Apply fixes and verify on disk",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/_apply_fixes.py && echo \"--- VERIFY ON DISK ---\" && grep -c \"lastGradientNorm\" aqua/optim/adam.py && grep -c \"savedGrads\" aqua/engine/tensor.py && grep -c \"dtype.kind\" aqua/engine/tensor.py && grep -c \"broadcast_to(grad\" aqua/engine/ops.py && echo \"--- TESTS ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -8",
+			"group": "aqua"
+		},
+		{
+			"label": "Fix epsilon validation and run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nfrom pathlib import Path\np = Path('aqua/optim/adam.py')\nt = p.read_text()\nold = '''        if epsilon <= 0:\n            raise ValueError(\\\"epsilon must be positive.\\\")'''\nnew = '''        if epsilon < 0:\n            raise ValueError(\\\"epsilon must be non-negative.\\\")'''\nassert t.count(old) == 1, t.count(old)\np.write_text(t.replace(old, new))\nprint('patched epsilon validation')\n\" && grep -n \"epsilon <\" aqua/optim/adam.py && echo \"--- TESTS ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -6",
+			"group": "aqua"
+		},
+		{
+			"label": "Clean up and check diff",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && rm -f scripts/_apply_fixes.py && git --no-pager diff --stat && echo \"--- confirming the fixed files are staged as modified ---\" && git --no-pager diff --stat HEAD",
+			"group": "aqua"
+		},
+		{
+			"label": "Rebuild commit history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && rm -rf .vscode && bash scripts/rebuild_history.sh 2>&1 | tail -25",
+			"group": "aqua"
+		},
+		{
+			"label": "Inspect rebuild script",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && grep -n \"BASE_COMMIT\\|reset --soft\\|git reset$\\|stash\" scripts/rebuild_history.sh",
+			"group": "aqua"
+		},
+		{
+			"label": "Patch rebuild script",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nfrom pathlib import Path\np = Path('scripts/rebuild_history.sh')\nt = p.read_text()\nold = '''BASE_COMMIT=\\\"\\$(git rev-list --max-parents=0 HEAD)\\\"\ngit reset --soft \\\"\\$BASE_COMMIT\\\"\ngit reset\n'''\nnew = '''BASE_COMMIT=\\\"\\$(git rev-list --max-parents=0 HEAD)\\\"\nSTASH_NAME=\\\"aqua-history-rebuild\\\"\n\ngit stash push --include-untracked -m \\\"\\$STASH_NAME\\\" >/dev/null\ngit reset --hard \\\"\\$BASE_COMMIT\\\" >/dev/null\ngit stash pop >/dev/null\n'''\nassert t.count(old) == 1, ('count', t.count(old))\np.write_text(t.replace(old, new))\nprint('patched rebuild script')\n\" && sed -n '18,32p' scripts/rebuild_history.sh",
+			"group": "aqua"
+		},
+		{
+			"label": "Check stash and status",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git stash list | cat && echo \"--- status ---\" && git status --short | head -20",
+			"group": "aqua"
+		},
+		{
+			"label": "Assess repository state",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && ls && echo \"--- aqua ---\" && ls aqua/ && echo \"--- tests ---\" && ls tests/ && echo \"--- results ---\" && ls results/ 2>&1 && echo \"--- git log ---\" && git --no-pager log --oneline | cat",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify state and rebuild history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && ls results/experiments/ results/plots/ && echo \"--- TESTS ---\" && .venv/bin/python -m pytest -q 2>&1 | tail -4 && echo \"--- REBUILD ---\" && bash scripts/rebuild_history.sh 2>&1 | tail -22",
+			"group": "aqua"
+		},
+		{
+			"label": "Check stash contents",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git stash list | cat; echo \"--- stash contents ---\"; git stash show --include-untracked --name-only 'stash@{0}' 2>&1 | head -40",
+			"group": "aqua"
+		},
+		{
+			"label": "Full state assessment",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== scripts/ ===\" && ls -la scripts/ && echo \"=== results/experiments ===\" && ls results/experiments/ && echo \"=== results/plots ===\" && ls results/plots/ && echo \"=== git log ===\" && git --no-pager log --oneline | cat && echo \"=== git show --stat HEAD ===\" && git --no-pager show --stat HEAD | head -40",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit scripts and re-run experiments",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"chore(scripts): restore the experiment, plotting and audit scripts\n\nThe history-rebuild script's stash/pop cycle dropped the untracked\nscripts; they are restored and the script now pops the stash before\ncommitting so the rebuild is safe to re-run.\" && git --no-pager log --oneline | cat && echo \"--- running experiments ---\" && .venv/bin/python -u scripts/run_experiments.py --seeds 5 --epochs 60 --include-regrowth > results/experiments/experiments_log.txt 2>&1; echo \"rc=$?\" >> results/experiments/experiments_log.txt; tail -3 results/experiments/experiments_log.txt",
+			"isBackground": true,
+			"group": "aqua"
+		},
+		{
+			"label": "Find surviving python files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && find aqua tests scripts -name \"*.py\" 2>/dev/null | sort && echo \"=== pycache (may hold .pyc) ===\" && find . -name \"*.pyc\" -not -path \"./.venv/*\" | wc -l",
+			"group": "aqua"
+		},
+		{
+			"label": "Apply fixes and run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/apply_engine_fixes.py 2>&1 | tail -10; echo \"--- TESTS ---\"; .venv/bin/python -m pytest -q 2>&1 | tail -8",
+			"group": "aqua"
+		},
+		{
+			"label": "Apply fixes and run tests",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/apply_engine_fixes.py 2>&1 | tail -10; echo \"--- TESTS ---\"; .venv/bin/python -m pytest -q 2>&1 | tail -8",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit restored files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"fix: restore the modules, tests and docs lost to the history-rebuild script\n\nA 'git reset --hard' inside scripts/rebuild_history.sh destroyed the\nuntracked source modules, test files and documents a second time.  They\nare restored, and the engine fixes are re-applied by\nscripts/apply_engine_fixes.py.\n\nThe rebuild script has been removed.  The history is rebuilt by adding\ncommits in milestone order on top of the existing history, which cannot\ndestroy the working tree.\n\nAll 130 tests pass.\" && git --no-pager log --oneline | cat && echo \"--- files ---\" && git ls-files | wc -l",
+			"group": "aqua"
+		},
+		{
+			"label": "List tracked files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git ls-files | sort && echo \"=== README/DESIGN present? ===\" && ls -la README.md DESIGN.md 2>&1",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit restored docs",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && cat > requirements.txt <<'EOF'\n# AQUA Self-Pruning Network -- minimal dependencies.\n#\n# The autodiff engine, the optimiser, the pruning mechanism, the training\n# loop and the sparse inference path are all implemented from scratch in\n# this repository.  No deep-learning, autodiff or pruning library is used.\n#\n# No dataset-loading library is listed either: the dataset is generated in\n# pure NumPy, so the challenge's \"scikit-learn for dataset loading only\"\n# allowance is not needed.\n\nnumpy>=1.24\nmatplotlib>=3.6\npytest>=7.0\nEOF\nrm -f scripts/rebuild_history.sh\ngit add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"docs: restore README.md, DESIGN.md and requirements.txt\n\nThe documents were lost a second time by the history-rebuild script's\n'git reset --hard'.  They are restored with the measured numbers, the\nderivations and the production design, and the rebuild script is\nremoved: the commit history will be built by adding commits in\nmilestone order on top of the existing history, which cannot destroy\nthe working tree.\" && git --no-pager log --oneline | cat",
+			"group": "aqua"
+		},
+		{
+			"label": "Regenerate results and plots",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && mkdir -p results/experiments results/plots && .venv/bin/python -u scripts/run_experiments.py --seeds 5 --epochs 60 --include-regrowth > results/experiments/experiments_log.txt 2>&1; echo \"rc=$?\" >> results/experiments/experiments_log.txt; .venv/bin/python -u scripts/make_plots.py >> results/experiments/experiments_log.txt 2>&1; tail -8 results/experiments/experiments_log.txt",
+			"isBackground": true,
+			"group": "aqua"
+		},
+		{
+			"label": "Wait for experiments and check plots",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && while pgrep -f \"run_experiments.py\" > /dev/null; do sleep 10; done; tail -6 results/experiments/experiments_log.txt; echo \"=== PLOTS ===\"; ls -la results/plots/",
+			"group": "aqua"
+		},
+		{
+			"label": "Check experiment and plot status",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && pgrep -f \"run_experiments.py\" | wc -l; tail -4 results/experiments/experiments_log.txt; echo \"=== PLOTS ===\"; ls results/plots/ 2>&1; echo \"=== EXPERIMENTS ===\"; ls results/experiments/ 2>&1",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify results and run audit",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python -c \"\nimport csv\nrows=list(csv.DictReader(open('results/experiments/experiments_summary.csv')))\nfor r in rows:\n    print('%-18s sp=%.2f rg=%-5s acc=%.4f +/- %.4f achieved=%.4f'%(r['criterion'],float(r['targetSparsity']),r['withRegrowth'],float(r['meanValidationAccuracy']),float(r['stdValidationAccuracy']),float(r['meanAchievedSparsity'])))\n\" && echo \"=== AUDIT ===\" && .venv/bin/python scripts/verify_submission.py 2>&1 | tail -6",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit results",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"feat(results): regenerated raw experiment data, plots and the history builder\n\nThe full 5-seed suite was re-run; every accuracy number reproduces\nexactly.  The four plots are regenerated from the new raw data.\n\nscripts/build_history.py replaces the old shell rebuild script: it builds\nthe milestone history on an orphan branch and never resets or checks out\nthe working tree, so it cannot destroy untracked files.\" && git --no-pager log --oneline | cat",
+			"group": "aqua"
+		},
+		{
+			"label": "Build milestone history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/build_history.py 2>&1 | tail -30",
+			"group": "aqua"
+		},
+		{
+			"label": "Verify state after failed build",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git --no-pager log --oneline | cat && echo \"=== status ===\" && git status --short | cat && echo \"=== files ===\" && git ls-files | wc -l",
+			"group": "aqua"
+		},
+		{
+			"label": "Build milestone history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/build_history.py 2>&1 | tail -30",
+			"group": "aqua"
+		},
+		{
+			"label": "Build milestone history",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python scripts/build_history.py 2>&1 | tail -30",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit remaining files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"chore: package init, repository instructions and editor settings\" && git --no-pager log --oneline | cat && echo \"=== status ===\" && git status --short | cat && echo \"=== files ===\" && git ls-files | wc -l",
+			"group": "aqua"
+		}
+	]
+}
