@@ -248,15 +248,20 @@ patch(
     "adam: global-norm clipping",
 )
 
-patch(
-    ADAM,
-    """        self._model: Optional[DenseNetwork] = None
+# This patch is guarded so that applying the script twice cannot append the
+# diagnostics a second time.
+if "self.lastGradientNorm" not in ADAM.read_text(encoding="utf-8"):
+    patch(
+        ADAM,
+        """        self._model: Optional[DenseNetwork] = None
         self.stepCount: int = 0""",
-    """        self._model: Optional[DenseNetwork] = None
+        """        self._model: Optional[DenseNetwork] = None
         self.stepCount: int = 0
         self.lastGradientNorm: float = 0.0
         self.lastClipScale: float = 1.0""",
-    "adam: clip diagnostics",
-)
+        "adam: clip diagnostics",
+    )
+else:
+    print("  SKIP  adam: clip diagnostics: already applied")
 
 print("done")
