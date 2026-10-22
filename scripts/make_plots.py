@@ -287,7 +287,9 @@ def main() -> int:
         print(f"Skipping the cost plot: {error}")
 
     for path in generated:
-        print(f"wrote {path}")
+        # Print a path relative to the repository root so the log does not
+        # leak a local absolute path.
+        print(f"wrote {path.relative_to(REPOSITORY_ROOT)}")
     return 0
 
 

@@ -145,7 +145,7 @@ signedTaylor       target=0.75 regrowth=False acc=0.5313 +/- 0.0530 (n=5)
 signedTaylor       target=0.90 regrowth=False acc=0.5513 +/- 0.0551 (n=5)
 signedTaylor       target=0.95 regrowth=False acc=0.5687 +/- 0.0960 (n=5)
 rc=0
-wrote /home/karthick/projects/aiTest/results/plots/pareto_sparsity_accuracy.png
-wrote /home/karthick/projects/aiTest/results/plots/criteria_comparison.png
-wrote /home/karthick/projects/aiTest/results/plots/learning_curves.png
-wrote /home/karthick/projects/aiTest/results/plots/cost_measurements.png
+wrote results/plots/pareto_sparsity_accuracy.png
+wrote results/plots/criteria_comparison.png
+wrote results/plots/learning_curves.png
+wrote results/plots/cost_measurements.png

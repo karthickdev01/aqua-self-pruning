@@ -7,3 +7,6 @@ __pycache__/
 .DS_Store
 .coverage
 htmlcov/
+
+# VS Code workspace cruft (machine-specific absolute paths)
+.vscode/
