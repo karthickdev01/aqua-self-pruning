@@ -359,6 +359,42 @@
 			"type": "shell",
 			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"chore: package init, repository instructions and editor settings\" && git --no-pager log --oneline | cat && echo \"=== status ===\" && git status --short | cat && echo \"=== files ===\" && git ls-files | wc -l",
 			"group": "aqua"
+		},
+		{
+			"label": "Final verification",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== FULL TEST SUITE ===\" && .venv/bin/python -m pytest -q 2>&1 | tail -6 && echo \"=== SUBMISSION AUDIT ===\" && .venv/bin/python scripts/verify_submission.py 2>&1 | tail -8 && echo \"=== CLEAN CLONE CHECK ===\" && rm -rf /tmp/clonecheck && git clone -q . /tmp/clonecheck && cd /tmp/clonecheck && ls && .venv/bin/python --version 2>/dev/null || /home/karthick/projects/aiTest/.venv/bin/python -m pytest -q 2>&1 | tail -4",
+			"group": "aqua"
+		},
+		{
+			"label": "Final deliverable review",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== HISTORY ===\" && git --no-pager log --oneline --graph | cat && echo \"=== DELIVERABLES ===\" && ls -la README.md DESIGN.md requirements.txt && echo \"--- results ---\" && ls -la results/experiments/ results/plots/ && echo \"=== CODE SIZE ===\" && find aqua tests scripts -name \"*.py\" | xargs wc -l | tail -3",
+			"group": "aqua"
+		},
+		{
+			"label": "Check changed files",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && echo \"=== git status ===\" && git status --short | cat && echo \"=== adam.py key checks ===\" && grep -n \"lastGradientNorm\\|_globalGradientNorm\\|_clipScaleFactor\\|epsilon <\\|savedGrads\" aqua/optim/adam.py aqua/engine/tensor.py | head -20 && echo \"=== rebuild_history.sh present? ===\" && ls -la scripts/rebuild_history.sh 2>&1",
+			"group": "aqua"
+		},
+		{
+			"label": "Inspect adam.py duplicated lines",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && sed -n '138,160p' aqua/optim/adam.py",
+			"group": "aqua"
+		},
+		{
+			"label": "Remove duplicate lines and destructive script",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && .venv/bin/python - <<'PYEOF'\nfrom pathlib import Path\np = Path('aqua/optim/adam.py')\nt = p.read_text()\ndup = \"\"\"        self.lastGradientNorm: float = 0.0\n        self.lastClipScale: float = 1.0\n        self.lastGradientNorm: float = 0.0\n        self.lastClipScale: float = 1.0\n        self.lastGradientNorm: float = 0.0\n        self.lastClipScale: float = 1.0\n\"\"\"\nsingle = \"\"\"        self.lastGradientNorm: float = 0.0\n        self.lastClipScale: float = 1.0\n\"\"\"\nassert t.count(dup) == 1, t.count(dup)\np.write_text(t.replace(dup, single))\nprint(\"removed the duplicated attribute assignments\")\nPYEOF\nrm -f scripts/rebuild_history.sh\nsed -n '140,155p' aqua/optim/adam.py\necho \"=== TESTS ===\"\n.venv/bin/python -m pytest -q 2>&1 | tail -4",
+			"group": "aqua"
+		},
+		{
+			"label": "Commit cleanup and audit",
+			"type": "shell",
+			"command": "cd /home/karthick/projects/aiTest && git add -A && git -c user.name=\"Karthick\" -c user.email=\"karthick@users.noreply.github.com\" commit -q -m \"chore: remove duplicated attribute assignments and the destructive rebuild script\n\nThe Adam optimiser had three copies of the lastGradientNorm /\nlastClipScale assignments, left behind by repeated application of\nscripts/apply_engine_fixes.py.  The patch helper now skips a pattern it\nhas already applied, so the duplication cannot recur.\n\nscripts/rebuild_history.sh is removed: its 'git reset --hard' destroyed\nuntracked files repeatedly.  scripts/build_history.py builds the same\nmilestone history on an orphan branch without ever resetting the working\ntree.\" && .venv/bin/python scripts/verify_submission.py 2>&1 | tail -4 && echo \"=== HISTORY ===\" && git --no-pager log --oneline | cat && echo \"=== STATUS ===\" && git status --short | cat",
+			"group": "aqua"
 		}
 	]
 }

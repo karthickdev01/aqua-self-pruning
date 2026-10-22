@@ -146,10 +146,6 @@ class AdamOptimizer:
         self.stepCount: int = 0
         self.lastGradientNorm: float = 0.0
         self.lastClipScale: float = 1.0
-        self.lastGradientNorm: float = 0.0
-        self.lastClipScale: float = 1.0
-        self.lastGradientNorm: float = 0.0
-        self.lastClipScale: float = 1.0
 
     # ------------------------------------------------------------------
     # Model attachment
