@@ -1,0 +1,151 @@
+[magnitude         ] target=0.00 seed=0 valAcc=0.9933 achieved=0.0000
+[magnitude         ] target=0.00 seed=1 valAcc=0.9733 achieved=0.0000
+[magnitude         ] target=0.00 seed=2 valAcc=0.9533 achieved=0.0000
+[magnitude         ] target=0.00 seed=3 valAcc=0.9500 achieved=0.0000
+[magnitude         ] target=0.00 seed=4 valAcc=0.9900 achieved=0.0000
+[magnitude         ] target=0.50 seed=0 valAcc=0.9833 achieved=0.5000
+[magnitude         ] target=0.50 seed=1 valAcc=0.9667 achieved=0.5000
+[magnitude         ] target=0.50 seed=2 valAcc=0.9167 achieved=0.5000
+[magnitude         ] target=0.50 seed=3 valAcc=0.9400 achieved=0.5000
+[magnitude         ] target=0.50 seed=4 valAcc=0.9700 achieved=0.5000
+[magnitude         ] target=0.75 seed=0 valAcc=0.9767 achieved=0.7500
+[magnitude         ] target=0.75 seed=1 valAcc=0.9467 achieved=0.7500
+[magnitude         ] target=0.75 seed=2 valAcc=0.8967 achieved=0.7500
+[magnitude         ] target=0.75 seed=3 valAcc=0.9467 achieved=0.7500
+[magnitude         ] target=0.75 seed=4 valAcc=0.9600 achieved=0.7500
+[magnitude         ] target=0.90 seed=0 valAcc=0.8667 achieved=0.9002
+[magnitude         ] target=0.90 seed=1 valAcc=0.7500 achieved=0.9002
+[magnitude         ] target=0.90 seed=2 valAcc=0.7767 achieved=0.9002
+[magnitude         ] target=0.90 seed=3 valAcc=0.8600 achieved=0.9002
+[magnitude         ] target=0.90 seed=4 valAcc=0.5967 achieved=0.9002
+[magnitude         ] target=0.95 seed=0 valAcc=0.5800 achieved=0.9497
+[magnitude         ] target=0.95 seed=1 valAcc=0.5700 achieved=0.9497
+[magnitude         ] target=0.95 seed=2 valAcc=0.6200 achieved=0.9497
+[magnitude         ] target=0.95 seed=3 valAcc=0.7767 achieved=0.9497
+[magnitude         ] target=0.95 seed=4 valAcc=0.6200 achieved=0.9497
+[saliency          ] target=0.00 seed=0 valAcc=0.9933 achieved=0.0000
+[saliency          ] target=0.00 seed=1 valAcc=0.9733 achieved=0.0000
+[saliency          ] target=0.00 seed=2 valAcc=0.9533 achieved=0.0000
+[saliency          ] target=0.00 seed=3 valAcc=0.9500 achieved=0.0000
+[saliency          ] target=0.00 seed=4 valAcc=0.9900 achieved=0.0000
+[saliency          ] target=0.50 seed=0 valAcc=0.9933 achieved=0.5000
+[saliency          ] target=0.50 seed=1 valAcc=0.9633 achieved=0.5000
+[saliency          ] target=0.50 seed=2 valAcc=0.9300 achieved=0.5000
+[saliency          ] target=0.50 seed=3 valAcc=0.9533 achieved=0.5000
+[saliency          ] target=0.50 seed=4 valAcc=0.9567 achieved=0.5000
+[saliency          ] target=0.75 seed=0 valAcc=0.9667 achieved=0.7500
+[saliency          ] target=0.75 seed=1 valAcc=0.9333 achieved=0.7500
+[saliency          ] target=0.75 seed=2 valAcc=0.8833 achieved=0.7500
+[saliency          ] target=0.75 seed=3 valAcc=0.9433 achieved=0.7500
+[saliency          ] target=0.75 seed=4 valAcc=0.9500 achieved=0.7500
+[saliency          ] target=0.90 seed=0 valAcc=0.8533 achieved=0.9002
+[saliency          ] target=0.90 seed=1 valAcc=0.9000 achieved=0.9002
+[saliency          ] target=0.90 seed=2 valAcc=0.8633 achieved=0.9002
+[saliency          ] target=0.90 seed=3 valAcc=0.9133 achieved=0.9002
+[saliency          ] target=0.90 seed=4 valAcc=0.9267 achieved=0.9002
+[saliency          ] target=0.95 seed=0 valAcc=0.8667 achieved=0.9497
+[saliency          ] target=0.95 seed=1 valAcc=0.7567 achieved=0.9497
+[saliency          ] target=0.95 seed=2 valAcc=0.8333 achieved=0.9497
+[saliency          ] target=0.95 seed=3 valAcc=0.7267 achieved=0.9497
+[saliency          ] target=0.95 seed=4 valAcc=0.8467 achieved=0.9497
+[signedTaylor      ] target=0.00 seed=0 valAcc=0.9933 achieved=0.0000
+[signedTaylor      ] target=0.00 seed=1 valAcc=0.9733 achieved=0.0000
+[signedTaylor      ] target=0.00 seed=2 valAcc=0.9533 achieved=0.0000
+[signedTaylor      ] target=0.00 seed=3 valAcc=0.9500 achieved=0.0000
+[signedTaylor      ] target=0.00 seed=4 valAcc=0.9900 achieved=0.0000
+[signedTaylor      ] target=0.50 seed=0 valAcc=0.5233 achieved=0.5000
+[signedTaylor      ] target=0.50 seed=1 valAcc=0.6233 achieved=0.5000
+[signedTaylor      ] target=0.50 seed=2 valAcc=0.6033 achieved=0.5000
+[signedTaylor      ] target=0.50 seed=3 valAcc=0.5200 achieved=0.5000
+[signedTaylor      ] target=0.50 seed=4 valAcc=0.5967 achieved=0.5000
+[signedTaylor      ] target=0.75 seed=0 valAcc=0.4767 achieved=0.7500
+[signedTaylor      ] target=0.75 seed=1 valAcc=0.5867 achieved=0.7500
+[signedTaylor      ] target=0.75 seed=2 valAcc=0.5867 achieved=0.7500
+[signedTaylor      ] target=0.75 seed=3 valAcc=0.5200 achieved=0.7500
+[signedTaylor      ] target=0.75 seed=4 valAcc=0.4867 achieved=0.7500
+[signedTaylor      ] target=0.90 seed=0 valAcc=0.5533 achieved=0.9002
+[signedTaylor      ] target=0.90 seed=1 valAcc=0.5300 achieved=0.9002
+[signedTaylor      ] target=0.90 seed=2 valAcc=0.6033 achieved=0.9002
+[signedTaylor      ] target=0.90 seed=3 valAcc=0.4700 achieved=0.9002
+[signedTaylor      ] target=0.90 seed=4 valAcc=0.6000 achieved=0.9002
+[signedTaylor      ] target=0.95 seed=0 valAcc=0.4767 achieved=0.9497
+[signedTaylor      ] target=0.95 seed=1 valAcc=0.7233 achieved=0.9497
+[signedTaylor      ] target=0.95 seed=2 valAcc=0.5200 achieved=0.9497
+[signedTaylor      ] target=0.95 seed=3 valAcc=0.5300 achieved=0.9497
+[signedTaylor      ] target=0.95 seed=4 valAcc=0.5933 achieved=0.9497
+[gradientMagnitude ] target=0.00 seed=0 valAcc=0.9933 achieved=0.0000
+[gradientMagnitude ] target=0.00 seed=1 valAcc=0.9733 achieved=0.0000
+[gradientMagnitude ] target=0.00 seed=2 valAcc=0.9533 achieved=0.0000
+[gradientMagnitude ] target=0.00 seed=3 valAcc=0.9500 achieved=0.0000
+[gradientMagnitude ] target=0.00 seed=4 valAcc=0.9900 achieved=0.0000
+[gradientMagnitude ] target=0.50 seed=0 valAcc=0.7567 achieved=0.5000
+[gradientMagnitude ] target=0.50 seed=1 valAcc=0.5800 achieved=0.5000
+[gradientMagnitude ] target=0.50 seed=2 valAcc=0.8033 achieved=0.5000
+[gradientMagnitude ] target=0.50 seed=3 valAcc=0.6800 achieved=0.5000
+[gradientMagnitude ] target=0.50 seed=4 valAcc=0.6100 achieved=0.5000
+[gradientMagnitude ] target=0.75 seed=0 valAcc=0.7767 achieved=0.7500
+[gradientMagnitude ] target=0.75 seed=1 valAcc=0.6167 achieved=0.7500
+[gradientMagnitude ] target=0.75 seed=2 valAcc=0.6700 achieved=0.7500
+[gradientMagnitude ] target=0.75 seed=3 valAcc=0.6467 achieved=0.7500
+[gradientMagnitude ] target=0.75 seed=4 valAcc=0.5100 achieved=0.7500
+[gradientMagnitude ] target=0.90 seed=0 valAcc=0.5767 achieved=0.9002
+[gradientMagnitude ] target=0.90 seed=1 valAcc=0.5033 achieved=0.9002
+[gradientMagnitude ] target=0.90 seed=2 valAcc=0.6200 achieved=0.9002
+[gradientMagnitude ] target=0.90 seed=3 valAcc=0.5267 achieved=0.9002
+[gradientMagnitude ] target=0.90 seed=4 valAcc=0.5200 achieved=0.9002
+[gradientMagnitude ] target=0.95 seed=0 valAcc=0.5300 achieved=0.9497
+[gradientMagnitude ] target=0.95 seed=1 valAcc=0.4933 achieved=0.9497
+[gradientMagnitude ] target=0.95 seed=2 valAcc=0.6000 achieved=0.9497
+[gradientMagnitude ] target=0.95 seed=3 valAcc=0.5667 achieved=0.9497
+[gradientMagnitude ] target=0.95 seed=4 valAcc=0.5133 achieved=0.9497
+[regrowth           ] target=0.50 seed=0 valAcc=0.9933 achieved=0.5000 revived=364
+[regrowth           ] target=0.50 seed=1 valAcc=0.9633 achieved=0.5000 revived=364
+[regrowth           ] target=0.50 seed=2 valAcc=0.9267 achieved=0.5000 revived=364
+[regrowth           ] target=0.50 seed=3 valAcc=0.9533 achieved=0.5000 revived=364
+[regrowth           ] target=0.50 seed=4 valAcc=0.9567 achieved=0.5000 revived=364
+[regrowth           ] target=0.75 seed=0 valAcc=0.9733 achieved=0.7500 revived=182
+[regrowth           ] target=0.75 seed=1 valAcc=0.9367 achieved=0.7500 revived=182
+[regrowth           ] target=0.75 seed=2 valAcc=0.8833 achieved=0.7500 revived=182
+[regrowth           ] target=0.75 seed=3 valAcc=0.9467 achieved=0.7500 revived=182
+[regrowth           ] target=0.75 seed=4 valAcc=0.9633 achieved=0.7500 revived=182
+[regrowth           ] target=0.90 seed=0 valAcc=0.8533 achieved=0.9002 revived=60
+[regrowth           ] target=0.90 seed=1 valAcc=0.8967 achieved=0.9002 revived=60
+[regrowth           ] target=0.90 seed=2 valAcc=0.8533 achieved=0.9002 revived=60
+[regrowth           ] target=0.90 seed=3 valAcc=0.9300 achieved=0.9002 revived=60
+[regrowth           ] target=0.90 seed=4 valAcc=0.9133 achieved=0.9002 revived=60
+[regrowth           ] target=0.95 seed=0 valAcc=0.8700 achieved=0.9497 revived=26
+[regrowth           ] target=0.95 seed=1 valAcc=0.7567 achieved=0.9497 revived=26
+[regrowth           ] target=0.95 seed=2 valAcc=0.8233 achieved=0.9497 revived=26
+[regrowth           ] target=0.95 seed=3 valAcc=0.7867 achieved=0.9497 revived=26
+[regrowth           ] target=0.95 seed=4 valAcc=0.8533 achieved=0.9497 revived=26
+
+=== Summary (mean validation accuracy) ===
+gradientMagnitude  target=0.00 regrowth=False acc=0.9720 +/- 0.0201 (n=5)
+gradientMagnitude  target=0.50 regrowth=False acc=0.6860 +/- 0.0946 (n=5)
+gradientMagnitude  target=0.75 regrowth=False acc=0.6440 +/- 0.0962 (n=5)
+gradientMagnitude  target=0.90 regrowth=False acc=0.5493 +/- 0.0480 (n=5)
+gradientMagnitude  target=0.95 regrowth=False acc=0.5407 +/- 0.0427 (n=5)
+magnitude          target=0.00 regrowth=False acc=0.9720 +/- 0.0201 (n=5)
+magnitude          target=0.50 regrowth=False acc=0.9553 +/- 0.0267 (n=5)
+magnitude          target=0.75 regrowth=False acc=0.9453 +/- 0.0299 (n=5)
+magnitude          target=0.90 regrowth=False acc=0.7700 +/- 0.1095 (n=5)
+magnitude          target=0.95 regrowth=False acc=0.6333 +/- 0.0833 (n=5)
+saliency           target=0.00 regrowth=False acc=0.9720 +/- 0.0201 (n=5)
+saliency           target=0.50 regrowth=False acc=0.9593 +/- 0.0228 (n=5)
+saliency           target=0.50 regrowth=True  acc=0.9587 +/- 0.0239 (n=5)
+saliency           target=0.75 regrowth=False acc=0.9353 +/- 0.0315 (n=5)
+saliency           target=0.75 regrowth=True  acc=0.9407 +/- 0.0351 (n=5)
+saliency           target=0.90 regrowth=False acc=0.8913 +/- 0.0318 (n=5)
+saliency           target=0.90 regrowth=True  acc=0.8893 +/- 0.0349 (n=5)
+saliency           target=0.95 regrowth=False acc=0.8060 +/- 0.0608 (n=5)
+saliency           target=0.95 regrowth=True  acc=0.8180 +/- 0.0467 (n=5)
+signedTaylor       target=0.00 regrowth=False acc=0.9720 +/- 0.0201 (n=5)
+signedTaylor       target=0.50 regrowth=False acc=0.5733 +/- 0.0482 (n=5)
+signedTaylor       target=0.75 regrowth=False acc=0.5313 +/- 0.0530 (n=5)
+signedTaylor       target=0.90 regrowth=False acc=0.5513 +/- 0.0551 (n=5)
+signedTaylor       target=0.95 regrowth=False acc=0.5687 +/- 0.0960 (n=5)
+rc=0
+wrote /home/karthick/projects/aiTest/results/plots/pareto_sparsity_accuracy.png
+wrote /home/karthick/projects/aiTest/results/plots/criteria_comparison.png
+wrote /home/karthick/projects/aiTest/results/plots/learning_curves.png
+wrote /home/karthick/projects/aiTest/results/plots/cost_measurements.png
