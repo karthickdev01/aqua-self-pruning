@@ -17,6 +17,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Fetch the full history so the commit-count check in
+          # scripts/verify_submission.py is meaningful in CI too.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5

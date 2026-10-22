@@ -18,7 +18,18 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+# The audit inspects the repository it is run against.  When it is executed
+# as a script that is the repository the script lives in; when it is imported
+# (for example by the test suite) the caller's current working directory is
+# used, so the audit can be pointed at a different checkout.
+def _resolveRepositoryRoot() -> Path:
+    """Return the repository the audit should inspect."""
+    if __name__ == "__main__":
+        return Path(__file__).resolve().parents[1]
+    return Path.cwd()
+
+
+REPOSITORY_ROOT = _resolveRepositoryRoot()
 RESULTS_DIRECTORY = REPOSITORY_ROOT / "results" / "experiments"
 PLOTS_DIRECTORY = REPOSITORY_ROOT / "results" / "plots"
 
@@ -127,7 +138,10 @@ def checkNoForbiddenImports(audit: Audit) -> None:
 
 def checkRequirements(audit: Audit) -> None:
     """Check that requirements.txt contains only the allowed dependencies."""
-    text = (REPOSITORY_ROOT / "requirements.txt").read_text(encoding="utf-8").lower()
+    requirementsPath = REPOSITORY_ROOT / "requirements.txt"
+    if not audit.check(requirementsPath.exists(), "requirements.txt is present"):
+        return
+    text = requirementsPath.read_text(encoding="utf-8").lower()
     allowed = {"numpy", "matplotlib", "pytest"}
     listedLines = [
         line for line in text.splitlines() if line.strip() and not line.strip().startswith("#")
@@ -216,8 +230,12 @@ def checkResults(audit: Audit) -> None:
     audit.check(not mismatched, "sparse forward matched the dense forward in every run")
 
     if audit.check(jsonPath.exists(), "summary JSON present"):
-        with open(jsonPath, encoding="utf-8") as handle:
-            payload = json.load(handle)
+        try:
+            with open(jsonPath, encoding="utf-8") as handle:
+                payload = json.load(handle)
+        except (OSError, ValueError) as error:
+            audit.check(False, f"summary JSON is readable ({error})")
+            payload = {}
         audit.check(
             "aggregates" in payload and len(payload["aggregates"]) > 0,
             "summary JSON contains the aggregates",
@@ -239,11 +257,12 @@ def checkResults(audit: Audit) -> None:
 def checkReadmeNumbers(audit: Audit) -> None:
     """Check that the numbers quoted in the README match the summary CSV."""
     summaryPath = RESULTS_DIRECTORY / "experiments_summary.csv"
-    if not summaryPath.exists():
+    readmePath = REPOSITORY_ROOT / "README.md"
+    if not summaryPath.exists() or not readmePath.exists():
         return
     with open(summaryPath, encoding="utf-8", newline="") as handle:
         summaryRows = list(csv.DictReader(handle))
-    readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+    readme = readmePath.read_text(encoding="utf-8")
 
     for criterion, target in (("saliency", 0.9), ("magnitude", 0.9), ("saliency", 0.95)):
         row = _findSummary(summaryRows, criterion, target, False)
@@ -256,8 +275,24 @@ def checkReadmeNumbers(audit: Audit) -> None:
         )
 
 
+def _isShallowClone() -> bool:
+    """Whether this is a shallow clone (e.g. a CI checkout with --depth 1).
+
+    A shallow clone contains only the tip commit, so the commit count is 1
+    even when the real history is long.  The history check must not fail in
+    that case -- it would report a problem that does not exist.
+    """
+    shallowFile = REPOSITORY_ROOT / ".git" / "shallow"
+    return shallowFile.exists()
+
+
 def checkGitHistory(audit: Audit) -> None:
-    """Check that the commit history has not been squashed into one commit."""
+    """Check that the commit history has not been squashed into one commit.
+
+    A shallow clone (``actions/checkout`` uses ``--depth 1`` by default)
+    only contains the tip commit, so the count is not meaningful there.  In
+    that case the check is skipped rather than reporting a false failure.
+    """
     try:
         output = subprocess.run(
             ["git", "rev-list", "--count", "HEAD"],
@@ -270,6 +305,11 @@ def checkGitHistory(audit: Audit) -> None:
     except Exception:  # pragma: no cover - git may be unavailable
         audit.check(False, "git history is readable")
         return
+
+    if _isShallowClone():
+        audit.check(True, f"git history not checked (shallow clone, {count} commit visible)")
+        return
+
     audit.check(count >= 3, f"git history has multiple commits ({count})")
 
 
